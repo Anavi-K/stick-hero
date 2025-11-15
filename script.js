@@ -20,9 +20,13 @@ let platforms = [];
 let sticks = [];
 let trees = [];
 
-// Todo: Save high score to localStorage (?)
-
+// Score
 let score = 0;
+
+// ⭐ HIGH SCORE (localStorage)
+let highScore = localStorage.getItem("highScore")
+  ? parseInt(localStorage.getItem("highScore"), 10)
+  : 0;
 
 // Configuration
 const canvasWidth = 375;
@@ -62,6 +66,22 @@ const perfectElement = document.getElementById("perfect");
 const restartButton = document.getElementById("restart");
 const scoreElement = document.getElementById("score");
 
+// Try to find a high score element; if missing, create one and append to .container (so you don't need to edit HTML)
+let highScoreElement = document.getElementById("high-score");
+if (!highScoreElement) {
+  const container = document.querySelector(".container") || document.body;
+  highScoreElement = document.createElement("div");
+  highScoreElement.id = "high-score";
+  // Minimal inline style so it shows even if you didn't add CSS
+  highScoreElement.style.position = "absolute";
+  highScoreElement.style.top = "30px";
+  highScoreElement.style.right = "30px";
+  highScoreElement.style.fontSize = "1.7em";
+  highScoreElement.style.fontWeight = "900";
+  container.appendChild(highScoreElement);
+}
+highScoreElement.innerText = "High Score: " + highScore;
+
 // Initialize layout
 resetGame();
 
@@ -77,6 +97,9 @@ function resetGame() {
   perfectElement.style.opacity = 0;
   restartButton.style.display = "none";
   scoreElement.innerText = score;
+
+  // Show high score (don't reset it)
+  highScoreElement.innerText = "High Score: " + highScore;
 
   // The first platform is always the same
   // x + w has to match paddingX
@@ -205,6 +228,17 @@ function animate(timestamp) {
           // Increase score
           score += perfectHit ? 2 : 1;
           scoreElement.innerText = score;
+
+          // ⭐ Update high score if needed
+          if (score > highScore) {
+            highScore = score;
+            try {
+              localStorage.setItem("highScore", highScore);
+            } catch (e) {
+              // localStorage might be unavailable in some contexts — silently ignore
+            }
+            highScoreElement.innerText = "High Score: " + highScore;
+          }
 
           if (perfectHit) {
             perfectElement.style.opacity = 1;

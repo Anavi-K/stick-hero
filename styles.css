@@ -23,6 +23,14 @@ body{
     font-weight: 900;
 }
 
+#high-score {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    font-size: 1.7em;
+    font-weight: 900;
+}
+
 #introduction{
     width: 200px;
     height: 150px;
